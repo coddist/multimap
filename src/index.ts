@@ -1,4 +1,2 @@
-/**
- * TODO: Write something meaningful
- */
-export default () => 42;
+export * from './arraymultimap';
+export * from './setmultimap';
