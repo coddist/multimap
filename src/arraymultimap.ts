@@ -1,4 +1,20 @@
-export class ArrayMultimap<K, V> extends Map<K, V[]> {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export class ArrayMultimap<K, V> extends Map<K, any> {
+  /**
+   * Overrides constructor with correct type
+   * @param entries Optional array of Map Entries
+   */
+  constructor(entries?: readonly (readonly [K, V[]])[] | null | ArrayMultimap<K, V> | Map<K, V[]>) {
+    super();
+    if (entries == null) return;
+    const _entries = entries instanceof Map
+      ? [...entries.entries()] as readonly (readonly [K, V[]])[]
+      : entries;
+    _entries.forEach(([key, value]) => {
+      super.set(key, value);
+    });
+  }
+
   /**
    * Adds value to the multimap
    *
@@ -6,11 +22,19 @@ export class ArrayMultimap<K, V> extends Map<K, V[]> {
    * @param value Value to set
    * @returns ArrayMultimap
    */
-  add(key: K, value: V) {
+  set(key: K, value: V) {
     if (!this.has(key)) {
-      Map.prototype.set.call(this, key, []);
+      super.set(key, []);
     }
     this.get(key)?.push(value);
     return this;
+  }
+
+  forEach(callbackfn: (value: V[], key: K, map: Map<K, V[]>) => void, thisArg?: any) {
+    super.forEach(callbackfn, thisArg);
+  }
+
+  get(key: K) {
+    return super.get(key) as V[] | undefined;
   }
 }
